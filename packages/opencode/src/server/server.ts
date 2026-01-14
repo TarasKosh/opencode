@@ -497,6 +497,31 @@ export namespace Server {
           },
         )
         .get(
+          "/agent",
+          describeRoute({
+            summary: "List agents",
+            description: "Get a list of all available agents.",
+            operationId: "agent.list",
+            responses: {
+              200: {
+                description: "List of agents",
+                content: {
+                  "application/json": {
+                    schema: resolver(
+                      z.record(z.string(), Agent.Info).meta({
+                        ref: "AgentList",
+                      }),
+                    ),
+                  },
+                },
+              },
+            },
+          }),
+          async (c) => {
+            return c.json(await Agent.state())
+          },
+        )
+        .get(
           "/experimental/tool/ids",
           describeRoute({
             summary: "List tool IDs",

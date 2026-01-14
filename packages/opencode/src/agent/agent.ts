@@ -15,6 +15,7 @@ import { PermissionNext } from "@/permission/next"
 import { mergeDeep, pipe, sortBy, values } from "remeda"
 import { Global } from "@/global"
 import path from "path"
+import { Plugin } from "../plugin"
 
 export namespace Agent {
   export const Info = z
@@ -194,7 +195,13 @@ export namespace Agent {
       },
     }
 
-    for (const [key, value] of Object.entries(cfg.agent ?? {})) {
+    const plugins = await Plugin.list()
+    const pluginAgents: Record<string, Config.Agent> = {}
+    for (const hook of plugins) {
+      Object.assign(pluginAgents, hook.agent)
+    }
+
+    for (const [key, value] of Object.entries({ ...cfg.agent, ...pluginAgents })) {
       if (value.disable) {
         delete result[key]
         continue

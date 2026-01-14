@@ -4,6 +4,7 @@
     "main": "src/index.ts",
     "dependencies": {
         "@opencode-ai/plugin": "workspace:*",
-        "zod": "^3.22.4"
+        "zod": "^3.22.4",
+        "jsonc-parser": "^3.2.0"
     }
 }
