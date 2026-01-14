@@ -1,0 +1,9 @@
+{
+    "name": "@opencode/solopreneur",
+    "version": "0.0.1",
+    "main": "src/index.ts",
+    "dependencies": {
+        "@opencode-ai/plugin": "workspace:*",
+        "zod": "^3.22.4"
+    }
+}
