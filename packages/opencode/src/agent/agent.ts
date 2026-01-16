@@ -15,6 +15,7 @@ import { PermissionNext } from "@/permission/next"
 import { mergeDeep, pipe, sortBy, values } from "remeda"
 import { Global } from "@/global"
 import path from "path"
+import { Log } from "../util/log"
 import { Plugin } from "../plugin"
 
 export namespace Agent {
@@ -44,7 +45,7 @@ export namespace Agent {
     })
   export type Info = z.infer<typeof Info>
 
-  const state = Instance.state(async () => {
+  export const state = Instance.state(async () => {
     const cfg = await Config.get()
 
     const defaults = PermissionNext.fromConfig({
@@ -200,6 +201,7 @@ export namespace Agent {
     for (const hook of plugins) {
       Object.assign(pluginAgents, hook.agent)
     }
+    Log.Default.info("agent.state", { pluginAgents: Object.keys(pluginAgents) })
 
     for (const [key, value] of Object.entries({ ...cfg.agent, ...pluginAgents })) {
       if (value.disable) {
@@ -245,6 +247,7 @@ export namespace Agent {
       )
     }
 
+    Log.Default.info("agent.state", { returning: Object.keys(result) })
     return result
   })
 

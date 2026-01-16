@@ -1,16 +1,32 @@
-version: '3.8'
-
 services:
-  opencode-solopreneur:
+  opencode-api:
     image: oven/bun:latest
     working_dir: /app
     volumes:
       - .:/app
+      - api_modules:/app/node_modules
     ports:
-      - "4096:4096"  # API Server
-      - "3001:3001"  # UI/App (if running)
-    command: bash -c "bun install --verbose && bun dev"
+      - "4096:4096"
+    command: bash -c "bun install && bun dev"
     environment:
       - NODE_ENV=development
     stdin_open: true
     tty: true
+
+  opencode-web:
+    image: oven/bun:latest
+    working_dir: /app
+    volumes:
+      - .:/app
+      - web_modules:/app/node_modules
+    ports:
+      - "3001:3001"
+    command: bash -c "bun install && bun run --cwd packages/app dev --port 3001 --host"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - opencode-api
+
+volumes:
+  api_modules:
+  web_modules:
