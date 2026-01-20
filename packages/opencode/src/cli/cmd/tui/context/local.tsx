@@ -19,6 +19,7 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
     const sync = useSync()
     const sdk = useSDK()
     const toast = useToast()
+    console.log("LocalContext init", { sync: !!sync, data: !!sync?.data, agent: !!sync?.data?.agent })
 
     function isModelValid(model: { providerID: string; modelID: string }) {
       const provider = sync.data.provider.find((x) => x.id === model.providerID)
@@ -34,11 +35,31 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
     }
 
     const agent = iife(() => {
-      const agents = createMemo(() => sync.data.agent.filter((x) => x.mode !== "subagent" && !x.hidden))
+      const agents = createMemo(() => {
+        try {
+          if (!sync.data?.agent) return []
+          return sync.data.agent.filter((x) => x.mode !== "subagent" && !x.hidden)
+        } catch (e) {
+          console.error("Error in agents memo", e)
+          return []
+        }
+      })
+
       const [agentStore, setAgentStore] = createStore<{
         current: string
       }>({
-        current: agents()[0]?.name ?? "",
+        current: "",
+      })
+
+      createEffect(() => {
+        try {
+          const list = agents()
+          if (list.length > 0 && !agentStore.current) {
+            setAgentStore("current", list[0].name)
+          }
+        } catch (e) {
+          console.error("Error in agent auto-selection effect", e)
+        }
       })
       const { theme } = useTheme()
       const colors = createMemo(() => [

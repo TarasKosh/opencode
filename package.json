@@ -11,6 +11,7 @@
     "prepare": "husky",
     "random": "echo 'Random script'",
     "hello": "echo 'Hello World!'",
+    "sync-upstream": "powershell -ExecutionPolicy Bypass -File ./script/sync-upstream.ps1",
     "test": "echo 'do not run tests from root' && exit 1"
   },
   "workspaces": {
